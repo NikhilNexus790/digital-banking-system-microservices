@@ -63,13 +63,16 @@ The system supports account management, balance tracking, money transfers, trans
      │transaction_db│  └────────────────┘  └──────────────────┘
      └─────────────┘
 🧩 Microservices
-Service	Port	Responsibility
-API Gateway	8080	Single entry point, routing and rate limiting
-Account Service	8081	Account creation, account details and balances
-Transaction Service	8082	Money transfers and transaction management
-Payment Service	8083	Payment processing and Razorpay integration
-Fraud Detection Service	8084	Transaction fraud analysis using Redis
-Notification Service	8085	Processes transaction and fraud notifications
+
+| Service                 |   Port | Responsibility                                 |
+| ----------------------- | -----: | ---------------------------------------------- |
+| API Gateway             | `8080` | Single entry point, routing and rate limiting  |
+| Account Service         | `8081` | Account creation, account details and balances |
+| Transaction Service     | `8082` | Money transfers and transaction management     |
+| Payment Service         | `8083` | Payment processing and Razorpay integration    |
+| Fraud Detection Service | `8084` | Transaction fraud analysis using Redis         |
+| Notification Service    | `8085` | Processes transaction and fraud notifications  |
+
 🛠️ Technology Stack
 Backend
 Java 17
@@ -128,21 +131,23 @@ Transaction Service
    └──────────────► Notification Service
                        │
                        ▼
-                    Alert User
+                  Alert User
 
 The transaction initially enters a processing state. Fraud detection evaluates the transaction and the result is communicated through Kafka before the transaction is completed.
 
 📡 Kafka Events
-Topic	Producer	Consumer
-transaction.initiated	Transaction Service	Fraud Detection Service
-fraud.check.result	Fraud Detection Service	Transaction Service
-transaction.completed	Transaction Service	Account Service, Notification Service
-fraud.detected	Fraud Detection Service	Account Service, Notification Service
-payment.completed	Payment Service	Notification Service
+
+| Topic                   | Producer                | Consumer                              |
+| ----------------------- | ----------------------- | ------------------------------------- |
+| `transaction.initiated` | Transaction Service     | Fraud Detection Service               |
+| `fraud.check.result`    | Fraud Detection Service | Transaction Service                   |
+| `transaction.completed` | Transaction Service     | Account Service, Notification Service |
+| `fraud.detected`        | Fraud Detection Service | Account Service, Notification Service |
+| `payment.completed`     | Payment Service         | Notification Service                  |
+
 🗄️ Databases
 
 The application uses separate databases for different services:
-
 MySQL
 │
 ├── account_db
@@ -167,36 +172,32 @@ Postman (optional, for API testing)
 git clone git@github.com:NikhilNexus790/digital-banking-system-microservices.git
 
 cd digital-banking-system-microservices
+
 2. Configure environment variables
 
 Create a .env file in the project root.
 
 Example:
-
 MYSQL_ROOT_PASSWORD=your_mysql_root_password
 
 RAZORPAY_KEY_ID=your_razorpay_test_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_test_key_secret
 RAZORPAY_WEBHOOK_SECRET=your_razorpay_webhook_secret
-
 Never commit .env to GitHub.
 
 A safe template is available in:
-
 .env.example
+
 3. Build and start the complete system
 
 From the project root:
-
 docker compose up --build -d
 
 This builds the six Spring Boot services and starts the complete infrastructure.
 
 4. Check running containers
 docker compose ps
-
 You should see services for:
-
 zookeeper
 kafka
 mysql
@@ -207,15 +208,15 @@ payment-service
 fraud-detection-service
 notification-service
 api-gateway
+
 5. View logs
 
 For all services:
-
 docker compose logs -f
 
 For a specific service:
-
 docker compose logs -f transaction-service
+
 6. Stop the system
 docker compose down
 
@@ -244,7 +245,6 @@ The API Gateway also provides request rate limiting using Redis.
 The APIs were tested using Postman.
 
 Example banking flow:
-
 1. Create Sender Account
           ↓
 2. Create Receiver Account
@@ -275,10 +275,10 @@ Razorpay webhook secrets
 API credentials
 
 The following files are excluded from Git:
-
 .env
 .idea/
 **/target/
+
 📁 Project Structure
 digital-banking-system-microservices/
 │
@@ -293,6 +293,7 @@ digital-banking-system-microservices/
 ├── .env.example
 ├── .gitignore
 └── README.md
+
 📈 Future Improvements
 Add Spring Security with JWT authentication
 Add centralized configuration using Spring Cloud Config
@@ -303,6 +304,7 @@ Add CI/CD pipeline using GitHub Actions
 Deploy the system to AWS
 Improve notification delivery with email/SMS providers
 Add comprehensive API documentation with Swagger/OpenAPI
+
 👨‍💻 Author
 
 Nikhil Prasad
@@ -315,19 +317,3 @@ https://github.com/NikhilNexus790
 📄 License
 
 This project is intended for educational and portfolio purposes.
-
-
-### One important thing
-
-I intentionally changed the README's startup instructions from:
-
-```bash
-docker-compose up -d
-
-followed by six mvn spring-boot:run commands
-
-to:
-
-docker compose up --build -d
-
-because your current project is actually configured to build and run all six services through Docker Compos
