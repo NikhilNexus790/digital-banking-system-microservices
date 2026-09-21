@@ -1,12 +1,15 @@
 spring:
   application:
     name: fraud-detection-service
+
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
+
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+
     consumer:
       group-id: fraud-detection-group
       auto-offset-reset: earliest
@@ -23,6 +26,7 @@ spring:
             value:
               default:
                 type: java.util.HashMap
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -33,7 +37,7 @@ server:
 # Account Service URL for Feign Client (Balance Check - Pattern 3)
 account:
   service:
-    url: http://localhost:8081
+    url: http://account-service:8081
 
 # Fraud Detection Rules
 fraud:
